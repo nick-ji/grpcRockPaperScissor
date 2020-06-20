@@ -10,32 +10,26 @@ namespace Rps
         public override Task<ShootReply> Shoot(ShootRequest request,
                               ServerCallContext context)
         {
-            // while (!context.CancellationToken.IsCancellationRequested)
-            // {
             var resultMessage = new ShootReply();
 
-            if (request == null || request.Shoot == null)
-            {
-                return Task.FromResult(new ShootReply
-                {
-                    ShootResult = Result.Lost,
-                    Message = "No hand given. I won."
-                });
-            }
-
-            var rand = new Random();
-            var compHand = rand.Next(1, 4);
-
-            var shootResult = GetShootResult(request.Shoot.Hand, (Hands)compHand);
+            //Get Serivce's hand
+            var serviceHand = GetHand();
+            //Get Result
+            var shootResult = GetShootResult(request.Shoot.Hand, serviceHand);
 
             return Task.FromResult(new ShootReply
             {
                 ShootResult = shootResult,
-                Message = $"{request.Shoot.UserName} shot {request.Shoot.Hand} and {shootResult} to {(Hands)compHand}"
+                Message = $"{request.Shoot.UserName} shot {request.Shoot.Hand} and {shootResult} to {serviceHand}"
             });
-            // }
         }
+        private Hands GetHand()
+        {
+            var rand = new Random();
+            var compHand = rand.Next(1, 4);
 
+            return (Hands)compHand;
+        }
         private Result GetShootResult(Hands given, Hands gotten)
         {
             if (given == Hands.Empty)
@@ -55,7 +49,5 @@ namespace Rps
 
             return Result.Lost;
         }
-
-
     }
 }
