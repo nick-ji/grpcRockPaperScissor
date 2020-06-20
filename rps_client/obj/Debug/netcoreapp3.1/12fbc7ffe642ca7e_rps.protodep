@@ -1,2 +1,0 @@
-obj\Debug\netcoreapp3.1/Rps.cs \
-obj\Debug\netcoreapp3.1/RpsGrpc.cs: Protos/rps.proto
