@@ -1,0 +1,48 @@
+﻿@inject Rps.Rps.RpsClient RpsClient
+@page "/rps"
+
+<h1>Rock Paper Scissors</h1>
+
+<p>Select Your hand: </p>
+
+<select @onchange=HandChanged>
+    @foreach(var hand in hands)
+    {
+        <option value=@((int)hand)>@hand.ToString()</option>
+    }
+</select>
+
+<button class="btn btn-primary" @onclick="Shoot">Shoot</button>
+
+@if(!string.IsNullOrEmpty(shootResultMessage))
+{
+    <h3>@shootResultMessage</h3>
+}
+
+@code {
+    private List<Rps.Hands> hands = new List<Rps.Hands>() { Rps.Hands.Empty, Rps.Hands.Rock, Rps.Hands.Paper, Rps.Hands.Scissors };
+    private int selectedHand;
+    public string shootResultMessage;
+
+    private void HandChanged(ChangeEventArgs e)
+    {
+        selectedHand = Convert.ToInt32(e.Value);
+    }
+    private void Shoot()
+    {
+        var result = RpsClient.Shoot(new Rps.ShootRequest
+        {
+            Shoot = new Rps.Shoot
+            {
+                Hand = (Rps.Hands)selectedHand,
+                UserId = 1234,
+                UserName = "gRPCTester"
+            }
+        });
+
+        var shootResult = result.ShootResult;
+        var shootMessage = result.Message;
+
+        shootResultMessage = shootMessage;
+    }
+}

@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+option csharp_namespace = "Rps";
+
+package rps;
+
+// The greeting service definition.
+service Rps {
+  // Sends a greeting
+  rpc Shoot (ShootRequest) returns (ShootReply);
+}
+    
+enum Hands{
+  EMPTY = 0;
+  ROCK = 1;
+  PAPER = 2;  
+  SCISSORS = 3;
+}
+enum Result {
+  TIE = 0;
+  LOST = 1;
+  WON = 2;
+}
+
+// The request message containing the user's name.
+message ShootRequest {
+    // repeated Shoot shoots = 1;
+    Shoot shoot = 1;
+}
+
+message Shoot {
+  int32 userId = 1;
+  string userName = 2;
+  Hands hand = 3;
+}
+
+// The response message containing the greetings.
+message ShootReply {
+  string message = 1; 
+  Result shootResult = 2;
+}
