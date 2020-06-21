@@ -3,46 +3,56 @@
 
 <h1>Rock Paper Scissors</h1>
 
-<p>Select Your hand: </p>
 
-<select @onchange=HandChanged>
-    @foreach(var hand in hands)
-    {
-        <option value=@((int)hand)>@hand.ToString()</option>
-    }
-</select>
+<div class="form-group p col-lg-2">
+    <label>Your Name: </label>
+    <input type="text" class="form-control" @bind="Name">
+</div>
+<div class="form-group p col-lg-2">
+    <label>Select Your hand: </label>
+    <br/>
+    <div class="btn-group" role="group" aria-label="Select Hands">
+      <button type="button" @onclick="@(e => HandChanged(Rps.Hands.Rock))" class="btn btn-secondary">@Rps.Hands.Rock.ToString()</button>
+      <button type="button" @onclick="@(e => HandChanged(Rps.Hands.Paper))" class="btn btn-secondary">@Rps.Hands.Paper.ToString()</button>
+      <button type="button" @onclick="@(e => HandChanged(Rps.Hands.Scissors))" class="btn btn-secondary">@Rps.Hands.Scissors.ToString()</button>
+    </div>
+</div>
+<div class="form-group p col-lg-2">
+    <button type="submit"class="btn btn-primary" @onclick="Shoot">Shoot</button>
+</div>
 
-<button class="btn btn-primary" @onclick="Shoot">Shoot</button>
-
-@if(!string.IsNullOrEmpty(shootResultMessage))
+@if(!string.IsNullOrEmpty(ShootResultMessage))
 {
-    <h3>@shootResultMessage</h3>
+    <h3>@ShootResultMessage</h3>
 }
 
-@code {
-    private List<Rps.Hands> hands = new List<Rps.Hands>() { Rps.Hands.Empty, Rps.Hands.Rock, Rps.Hands.Paper, Rps.Hands.Scissors };
-    private int selectedHand;
-    public string shootResultMessage;
 
-    private void HandChanged(ChangeEventArgs e)
+@code {
+    private string Name { get; set; }
+ 
+    private Rps.Hands SelectedHand;
+    private string ShootResultMessage;
+    public bool requesting;
+
+    private void HandChanged(Rps.Hands hand)
     {
-        selectedHand = Convert.ToInt32(e.Value);
+        SelectedHand = hand;
     }
-    private void Shoot()
+    private void Shoot(EventArgs e)
     {
         var result = RpsClient.Shoot(new Rps.ShootRequest
         {
             Shoot = new Rps.Shoot
             {
-                Hand = (Rps.Hands)selectedHand,
+                Hand = SelectedHand,
                 UserId = 1234,
-                UserName = "gRPCTester"
+                UserName = Name
             }
         });
 
         var shootResult = result.ShootResult;
         var shootMessage = result.Message;
 
-        shootResultMessage = shootMessage;
+        ShootResultMessage = shootMessage;
     }
 }
